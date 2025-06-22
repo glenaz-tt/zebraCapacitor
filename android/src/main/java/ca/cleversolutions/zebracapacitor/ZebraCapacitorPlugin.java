@@ -2,7 +2,7 @@ package ca.cleversolutions.zebracapacitor;
 
 import com.getcapacitor.JSArray;
 import com.getcapacitor.JSObject;
-import com.getcapacitor.NativePlugin;
+import com.getcapacitor.annotation.CapacitorPlugin;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@NativePlugin
+@CapacitorPlugin(name = "ZebraCapacitor")
 public class ZebraCapacitorPlugin extends Plugin {
     private Connection printerConnection;
     private com.zebra.sdk.printer.ZebraPrinter printer;
@@ -46,19 +46,19 @@ public class ZebraCapacitorPlugin extends Plugin {
 
         JSObject ret = new JSObject();
         ret.put("value", value);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
     public void print(PluginCall  call){
         String message = call.getString("cpcl");
         if(!isConnected()){
-            call.error("Printer Not Connected");
+            call.reject("Printer Not Connected");
         }else {
             if (this.printCPCL(message)) {
-                call.success();
+                call.resolve();
             } else {
-                call.error("unknown error");
+                call.reject("unknown error");
             }
         }
     }
@@ -67,7 +67,7 @@ public class ZebraCapacitorPlugin extends Plugin {
     public void isConnected(PluginCall  call){
         JSObject ret = new JSObject();
         ret.put("connected", this.isConnected());
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -76,7 +76,7 @@ public class ZebraCapacitorPlugin extends Plugin {
         com.zebra.sdk.printer.ZebraPrinter printer = this.connect(address);
         JSObject ret = new JSObject();
         ret.put("success", printer != null);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
@@ -102,13 +102,13 @@ public class ZebraCapacitorPlugin extends Plugin {
         }else{
             ret.put("connected", false);
         }
-        call.success(ret);
+        call.resolve(ret);
     }
 
     @PluginMethod()
     public void disconnect(PluginCall  call){
         this.disconnect();
-        call.success();
+        call.resolve();
     }
 
     @PluginMethod()
@@ -117,7 +117,7 @@ public class ZebraCapacitorPlugin extends Plugin {
         JSArray printers = this.NonZebraDiscovery();
         JSObject ret = new JSObject();
         ret.put("printers", printers);
-        call.success(ret);
+        call.resolve(ret);
     }
 
     protected void finalize() throws Throwable {
@@ -208,14 +208,14 @@ public class ZebraCapacitorPlugin extends Plugin {
 
             public void discoveryError(String message)
             {
-                call.error(message);
+                call.reject(message);
             }
 
             public void discoveryFinished()
             {
                 JSObject ret = new JSObject();
                 ret.put("printers", printers);
-                call.success(ret);
+                call.resolve(ret);
             }
 
             @Override
@@ -252,7 +252,7 @@ public class ZebraCapacitorPlugin extends Plugin {
                 try {
                     BluetoothDiscoverer.findPrinters(context, new BTDiscoveryHandler(call));
                 } catch (Exception e) {
-                    call.error(e.getMessage());
+                    call.reject(e.getMessage());
                 }
             }
         }).start();
