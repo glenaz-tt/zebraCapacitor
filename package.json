@@ -17,9 +17,10 @@
   "author": "Evan Moore",
   "license": "MIT",
   "devDependencies": {
-    "@capacitor/android": "^2.5.0",
-    "@capacitor/core": "^2.5.0",
-    "@capacitor/ios": "^2.5.0",
+    "@capacitor/android": "^3.9.0",
+    "@capacitor/cli": "^3.9.0",
+    "@capacitor/core": "^3.9.0",
+    "@capacitor/ios": "^3.9.0",
     "@ionic/prettier-config": "^1.0.0",
     "@ionic/swiftlint-config": "^1.0.0",
     "@rollup/plugin-node-resolve": "^8.1.0",
@@ -31,7 +32,10 @@
     "typescript": "~3.8.3"
   },
   "peerDependencies": {
-    "@capacitor/core": "^2.4.4"
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0",
+    "@capacitor/ios": "^6.0.0"
   },
   "files": [
     "dist/",
