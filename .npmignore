@@ -1,0 +1,7 @@
+# .npmignore at the project root
+# exclude everything by default, then include dist
+*
+!dist/
+!package.json
+!README.md
+!ZebraCapacitor.podspec
