@@ -154,7 +154,7 @@ public class ZebraCapacitorPlugin extends Plugin {
             String result = out.toString("UTF-8").trim();
 
             // Anything other than “?” means Link-OS is supported
-            isAvailable = result.length() > 0 && !result.startsWith("?");
+            isAvailable = result.length() > 0 && !result.contains("?");
             if (isAvailable) {
                 version = result;
             }
