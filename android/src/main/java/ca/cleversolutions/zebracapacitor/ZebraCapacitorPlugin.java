@@ -135,11 +135,14 @@ public class ZebraCapacitorPlugin extends Plugin {
 
         connect(address);
         if (printerConnection == null || !printerConnection.isConnected()) {
-            ret.put("supported", false);
+            ret.put("linkOsIsAvailable", false);
+            ret.put("linkOsVersion", null);
             call.resolve(ret);
             return;
         }
 
+        boolean isAvailable = false;
+        String version = null;
         try {
             String cmd = "! U1 getvar \"appl.link_os_version\"\r\n";
             printerConnection.write(cmd.getBytes("UTF-8"));
@@ -148,15 +151,19 @@ public class ZebraCapacitorPlugin extends Plugin {
 
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             printerConnection.read(out);
-            String version = out.toString("UTF-8").trim();
+            String result = out.toString("UTF-8").trim();
 
             // Anything other than “?” means Link-OS is supported
-            boolean supported = version.length() > 0 && !version.contains("?");;
-            ret.put("supported", supported);
-            ret.put("version", version);
+            isAvailable = result.length() > 0 && !result.startsWith("?");
+            if (isAvailable) {
+                version = result;
+            }
         } catch (ConnectionException | InterruptedException | UnsupportedEncodingException e) {
-            ret.put("supported", false);
+            // on error, leave isAvailable=false and version=null
         } finally {
+            // 6) Always populate both fields and clean up
+            ret.put("linkOsIsAvailable", isAvailable);
+            ret.put("linkOsVersion", version);
             disconnect();
         }
 
