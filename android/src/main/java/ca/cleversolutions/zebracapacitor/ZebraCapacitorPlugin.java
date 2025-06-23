@@ -26,6 +26,9 @@ import com.zebra.sdk.printer.discovery.DiscoveryHandler;
 
 import org.json.JSONArray;
 
+import java.io.ByteArrayOutputStream;
+import java.io.UnsupportedEncodingException;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -130,9 +133,8 @@ public class ZebraCapacitorPlugin extends Plugin {
         String address = call.getString("MACAddress");
         JSObject ret = new JSObject();
 
-        com.zebra.sdk.printer.ZebraPrinter zp = connect(address);
+        connect(address);
         if (printerConnection == null || !printerConnection.isConnected()) {
-            // failed to open → not a Link-OS printer (or not paired)
             ret.put("supported", false);
             call.resolve(ret);
             return;
@@ -140,19 +142,19 @@ public class ZebraCapacitorPlugin extends Plugin {
 
         try {
             String cmd = "! U1 getvar \"appl.link_os_version\"\r\n";
-            printerConnection.write(cmd.getBytes());
+            printerConnection.write(cmd.getBytes("UTF-8"));
 
             Thread.sleep(200);
 
-            byte[] buffer = new byte[512];
-            int len = printerConnection.read(buffer);
-            String version = new String(buffer, 0, len).trim();
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            printerConnection.read(out);
+            String version = out.toString("UTF-8").trim();
 
-            // If it isn’t “?” then Link-OS is supported
+            // Anything other than “?” means Link-OS is supported
             boolean supported = version.length() > 0 && !version.startsWith("?");
             ret.put("supported", supported);
             ret.put("version", version);
-        } catch (Exception e) {
+        } catch (ConnectionException | InterruptedException | UnsupportedEncodingException e) {
             ret.put("supported", false);
         } finally {
             disconnect();
