@@ -125,6 +125,42 @@ public class ZebraCapacitorPlugin extends Plugin {
         if( isConnected()) disconnect();
     }
 
+    @PluginMethod()
+    public void probeLinkOs(PluginCall call) {
+        String address = call.getString("MACAddress");
+        JSObject ret = new JSObject();
+
+        com.zebra.sdk.printer.ZebraPrinter zp = connect(address);
+        if (printerConnection == null || !printerConnection.isConnected()) {
+            // failed to open → not a Link-OS printer (or not paired)
+            ret.put("supported", false);
+            call.resolve(ret);
+            return;
+        }
+
+        try {
+            String cmd = "! U1 getvar \"appl.link_os_version\"\r\n";
+            printerConnection.write(cmd.getBytes());
+
+            Thread.sleep(200);
+
+            byte[] buffer = new byte[512];
+            int len = printerConnection.read(buffer);
+            String version = new String(buffer, 0, len).trim();
+
+            // If it isn’t “?” then Link-OS is supported
+            boolean supported = version.length() > 0 && !version.startsWith("?");
+            ret.put("supported", supported);
+            ret.put("version", version);
+        } catch (Exception e) {
+            ret.put("supported", false);
+        } finally {
+            disconnect();
+        }
+
+        call.resolve(ret);
+    }
+
 
     private boolean printCPCL(String cpcl)
     {

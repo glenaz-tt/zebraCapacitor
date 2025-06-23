@@ -11,4 +11,5 @@ CAP_PLUGIN(ZebraCapacitorPlugin, "ZebraCapacitor",
     CAP_PLUGIN_METHOD(connect, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(disconnect, CAPPluginReturnPromise);
     CAP_PLUGIN_METHOD(discover, CAPPluginReturnPromise);
+    CAP_PLUGIN_METHOD(probeLinkOs, CAPPluginReturnPromise);
 )

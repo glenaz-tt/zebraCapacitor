@@ -103,6 +103,13 @@ export class ZebraCapacitorPluginWeb extends WebPlugin implements ZebraCapacitor
     return true;
   }
 
+  async probeLinkOs(): Promise<{ supported: boolean; version?: string }> {
+    console.log("ZebraPluginWeb::probeLinkOs");
+    return new Promise(resolve => setTimeout(() => {
+      resolve({ supported: false, version: '' });
+    }, 500));
+  }
+
 }
 
 const ZebraCapacitorPlugin = new ZebraCapacitorPluginWeb();

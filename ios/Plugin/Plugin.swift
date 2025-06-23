@@ -114,6 +114,56 @@ public class ZebraCapacitorPlugin: CAPPlugin {
             return
         }
     }
+
+    @objc func probeLinkOs(_ call: CAPPluginCall) {
+        guard let address = call.getString("MACAddress"), !address.isEmpty else {
+            call.reject("Invalid or missing MACAddress")
+            return
+        }
+
+        self.printerConnection?.close()
+        self.printerConnection = MfiBtPrinterConnection(serialNumber: address)
+        do {
+            try self.printerConnection?.open()
+        } catch let error {
+            call.resolve([
+                "supported": false,
+                "error": error.localizedDescription
+            ])
+            return
+        }
+
+        let cmd = "! U1 getvar \"appl.link_os_version\"\r\n"
+        var writeError: NSError?
+        self.printerConnection?.write(cmd.data(using: .utf8), error: &writeError)
+        if writeError != nil {
+            // couldn’t write → not Link-OS
+            call.resolve(["supported": false])
+            self.printerConnection?.close()
+            return
+        }
+
+        Thread.sleep(forTimeInterval: 0.2)
+
+        var readError: NSError?
+        guard let responseData = self.printerConnection?.read(&readError),
+            readError == nil,
+            let version = String(data: responseData, encoding: .utf8)?
+                            .trimmingCharacters(in: .whitespacesAndNewlines),
+            !version.hasPrefix("?") else {
+            // a leading “?” or error means it’s not Link-OS
+            call.resolve(["supported": false])
+            self.printerConnection?.close()
+            return
+        }
+
+        call.resolve([
+            "supported": true,
+            "version": version
+        ])
+
+        self.printerConnection?.close()
+    }
     
     /**
      * Print the cpcl
