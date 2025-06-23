@@ -21,8 +21,8 @@ export interface ZebraPrinterStatus {
     isPartialFormatInProgress?: boolean;
 }
 export interface ZebraProbeLinkOsResult {
-    support: boolean;
-    version: string;
+    linkOsIsAvailable: boolean;
+    linkOsVersion: string;
 }
 export interface ZebraCapacitorPluginInterface {
     echo(options: {
@@ -40,7 +40,5 @@ export interface ZebraCapacitorPluginInterface {
         MACAddress: string;
     }): Promise<boolean>;
     disconnect(): Promise<boolean>;
-    probeLinkOs(options: {
-        MACAddress: string;
-    }): Promise<ZebraProbeLinkOsResult>;
+    probeLinkOs(): Promise<ZebraProbeLinkOsResult>;
 }

@@ -24,8 +24,8 @@ export interface ZebraPrinterStatus{
 }
 
 export interface ZebraProbeLinkOsResult {
-  support: boolean;
-  version: string;
+  linkOsIsAvailable: boolean;
+  linkOsVersion: string;
 }
 
 export interface ZebraCapacitorPluginInterface {
@@ -37,5 +37,5 @@ export interface ZebraCapacitorPluginInterface {
   isConnected(): Promise<boolean>;
   connect(options: { MACAddress: string }): Promise<boolean>;
   disconnect(): Promise<boolean>;
-  probeLinkOs(options: { MACAddress: string }): Promise<ZebraProbeLinkOsResult>;
+  probeLinkOs(): Promise<ZebraProbeLinkOsResult>;
 }
