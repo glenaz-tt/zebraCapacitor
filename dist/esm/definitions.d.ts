@@ -40,5 +40,7 @@ export interface ZebraCapacitorPluginInterface {
         MACAddress: string;
     }): Promise<boolean>;
     disconnect(): Promise<boolean>;
-    probeLinkOs(): Promise<ZebraProbeLinkOsResult>;
+    probeLinkOs(options: {
+        MACAddress: string;
+    }): Promise<ZebraProbeLinkOsResult>;
 }
