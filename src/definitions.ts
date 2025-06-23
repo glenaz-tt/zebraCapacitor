@@ -1,9 +1,3 @@
-declare module '@capacitor/core' {
-  interface PluginRegistry {
-    ZebraCapacitor: ZebraCapacitorPluginInterface;
-  }
-}
-
 export interface ZebraPrinter {
   name: string;
   address: string;
