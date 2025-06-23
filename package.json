@@ -1,6 +1,6 @@
 {
   "name": "zebra-capacitor",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Capacitor plugin for Zebra Printers",
   "main": "dist/plugin.js",
   "module": "dist/esm/index.js",
